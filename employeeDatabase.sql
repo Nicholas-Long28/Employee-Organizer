@@ -56,5 +56,11 @@ SELECT * FROM employees;
 SELECT * FROM job;
 SELECT * FROM department;
 
+SELECT first_name, last_name, roles_id, manager_id, jobs_id
+FROM employees 
+RIGHT JOIN department ON employees.jobs_id = jobs_id;
 
+SELECT title, salary, department_id, employee_id
+FROM job
+RIGHT JOIN employees ON employee_id = employee_id;
 
