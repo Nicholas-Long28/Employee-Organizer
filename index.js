@@ -1,7 +1,7 @@
 const mysql = require('mysql');
 const inquirer = require('inquirer');
 const console = require('console');
-const { title } = require('node:process');
+//const { title } = require('node:process');
 
 const connection = mysql.createConnection({
     host: 'localhost',
@@ -28,25 +28,28 @@ const runSearch = () => {
             type: 'rawlist',
             message: 'Which department does the employee belong too?',
             choices: [
-                'UX',
-                'Developers',
-                'Managers',
-                'Engineers',
+                'Select department in which the employee will be working in?',
+                'Select the title in which the employee will have.',
+                'What the employees salary be?',
+                'What department will the manager belong too?',
             ],
         })
         .then((answer) => {
             switch (answer.action) {
-                case 'UX':
-                    uxSearch();
+                case 'Select department in which the employee will be working in?':
+                    departmentSearch();
                     break;
-                case 'Developers':
-                    developerSearch();
+
+                case 'Select the title in which the employee will have.':
+                    titleSearch();
                     break;
-                case 'Managers':
-                    managerSearch();
+
+                case 'What the employees salary be?':
+                    leadEngineerSearch();
                     break;
-                case 'Engineers':
-                    engineerSearch();
+
+                case 'What department will the manager belong too?':
+                    departmentIdSearch();
                     break;
                 default:
                     console.log(`Invalid action: ${answer.action}`);
@@ -55,63 +58,41 @@ const runSearch = () => {
 };
 
 //Prompts user for the position in their department
-const uxSearch = () => {
+const departmentSearch = () => {
     inquirer
         .prompt({
-            name: 'action',
-            type: 'rawlist',
-            message: 'Which title does the employee have?',
+            name: 'department',
+            type: 'choices',
+            message: 'What department does the employee belong too?',
             choices: [
-                'Lead Developer',
+                'UX',
+                'Developers',
+                'Managers',
                 'Sales',
-                'Lead Engineer',
-                'Office Manager',
-                'Junior Developer',
+                'Engineers',
             ],
         })
         .then((answer) => {
-                const query = 'SELECT id, title FROM job';
-                connection.query(query, { title: answer.title }, (err, res) => {
+                const query = 'SELECT id, department_Name FROM department';
+                connection.query(query, { department: answer.department_Name }, (err, res) => {
                     res.forEach(({ id }) => {
                         console.log(
-                            `ID: ${id} || Title: ${title}`
+                            `ID: ${id} || Department: ${department_Name}`
                         );
                     });
                     runSearch();
-                    /*case 'Lead Developer':
-                        leadDeveloperSearch();
-                        break;
-
-                    case 'Sales':
-                        salesSearch();
-                        break;
-
-                    case 'Lead Engineer':
-                        leadEngineerSearch();
-                        break;
-
-                    case 'Office Manager':
-                        officeManagerSearch();
-                        break;
-
-                    case 'Junior Developer':
-                        juniorDeveloperSearch();
-                        break;
-
-                    default:
-                        console.log(`Invalid action ${answer.action}`);*/
                 });
         });    
     
 };
 
 //Prompts user for employee id
-const thirdPrompt = () => {
+const departmentIdSearch = () => {
     inquirer
         .prompt({
             name: 'input',
             type: 'number',
-            message: 'What is the employees Id number?',
+            message: 'What is the managers department id number?',
             validate: function(value) {
                 var valid = !isNaN(parseFloat)(value);
                 return valid || 'Please enter a number';
@@ -121,44 +102,31 @@ const thirdPrompt = () => {
 };
 
 //Prompts user for Department Id that they belong too
-const fourthPrompt = () => {
+const titleSearch = () => {
     inquirer
         .prompt({
-            name: 'action',
-            type: 'rawlist',
-            message: 'Which department id does the employee belong too?',
+            name: 'title',
+            type: 'choice',
+            message: 'What is the employees title?',
             choices: [
-                '1',
-                '2',
-                '3',
-                '4',
+                'Senior Developer',
+                'Lead Engineer',
+                'Intern',
+                'Human Resources',
             ],
         })
-    .then((answer) => {
-        switch (answer.action) {
-            case '1':
-                uxSearch();
-                break;
-
-            case '2':
-                developerSearch();
-                break;
-
-            case '3':
-                managerSearch();
-                break;
-
-            case '4':
-                engineerSearch();
-                break;
-
-            default:
-                console.log(`invalid action ${answer.action}`);
-                break;
+        .then((answer) => {
+            const query = 'SELECT id, title FROM job';
+            connection.query(query, { title: answer.title }, (err, res) => {
+                res.forEach(({ id }) => {
+                    console.log(
+                        `ID: ${id} || Title: ${title}`
+                    );
+                });
+                runSearch();
         }
-    });
-};
-
+    );
+});
 //Prompts user for desired salary for the employee
 const fifthPrompt = () => {
     inquirer
@@ -213,7 +181,7 @@ const employeeName = () => {
           runSearch();
         });
       });
-  };
+};
 
 //Prompt for role id
 const role = () => {
@@ -328,6 +296,5 @@ const jobPrompt = () => {
             default:
                 console.log(`invalid action ${answer.action}`);
                 break;
-        }
-    });
-};
+        };
+});
