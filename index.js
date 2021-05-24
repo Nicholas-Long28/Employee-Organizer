@@ -1,6 +1,7 @@
 const mysql = require('mysql');
 const inquirer = require('inquirer');
 const console = require('console');
+const { title } = require('node:process');
 
 const connection = mysql.createConnection({
     host: 'localhost',
@@ -54,7 +55,7 @@ const runSearch = () => {
 };
 
 //Prompts user for the position in their department
-const secondPrompt = () => {
+const uxSearch = () => {
     inquirer
         .prompt({
             name: 'action',
@@ -69,8 +70,15 @@ const secondPrompt = () => {
             ],
         })
         .then((answer) => {
-                switch (answer.action) {
-                    case 'Lead Developer':
+                const query = 'SELECT id, title FROM job';
+                connection.query(query, { title: answer.title }, (err, res) => {
+                    res.forEach(({ id }) => {
+                        console.log(
+                            `ID: ${id} || Title: ${title}`
+                        );
+                    });
+                    runSearch();
+                    /*case 'Lead Developer':
                         leadDeveloperSearch();
                         break;
 
@@ -91,10 +99,10 @@ const secondPrompt = () => {
                         break;
 
                     default:
-                        console.log(`Invalid action ${answer.action}`);
-                }
-            
-        });
+                        console.log(`Invalid action ${answer.action}`);*/
+                });
+        });    
+    
 };
 
 //Prompts user for employee id
