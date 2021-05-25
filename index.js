@@ -10,8 +10,8 @@ const connection = mysql.createConnection({
 
     user: 'root',
 
-    password : 'Pitt2021!',
-    database : 'company_db',
+    password: 'Pitt2021!',
+    database: 'company_db',
 });
 
 connection.connect((err) => {
@@ -26,8 +26,9 @@ const runSearch = () => {
         .prompt({
             name: 'action',
             type: 'rawlist',
-            message: 'Which department does the employee belong too?',
+            message: 'What would you like to do?',
             choices: [
+                'Add new employee.',
                 'Select department in which the employee will be working in?',
                 'Select the title in which the employee will have.',
                 'What the employees salary be?',
@@ -45,12 +46,16 @@ const runSearch = () => {
                     break;
 
                 case 'What the employees salary be?':
-                    leadEngineerSearch();
+                    salarySearch();
                     break;
 
                 case 'What department will the manager belong too?':
                     departmentIdSearch();
                     break;
+                case 'Add new employee.':
+                    getNewEmployee();
+                    break;
+
                 default:
                     console.log(`Invalid action: ${answer.action}`);
             }
@@ -62,7 +67,7 @@ const departmentSearch = () => {
     inquirer
         .prompt({
             name: 'department',
-            type: 'choices',
+            type: 'list',
             message: 'What department does the employee belong too?',
             choices: [
                 'UX',
@@ -73,32 +78,46 @@ const departmentSearch = () => {
             ],
         })
         .then((answer) => {
-                const query = 'SELECT id, department_Name FROM department';
-                connection.query(query, { department: answer.department_Name }, (err, res) => {
-                    res.forEach(({ id }) => {
-                        console.log(
-                            `ID: ${id} || Department: ${department_Name}`
-                        );
-                    });
-                    runSearch();
+            const query = 'SELECT id, department_Name FROM department WHERE ?';
+            connection.query(query, { department_Name: answer.department }, (err, res) => {
+                res.forEach(({ id, department_Name }) => {
+                    console.log(
+                        `ID: ${id} || Department: ${department_Name}`
+                    );
                 });
-        });    
-    
+                runSearch();
+            });
+        });
+
 };
 
 //Prompts user for employee id
 const departmentIdSearch = () => {
     inquirer
         .prompt({
-            name: 'input',
-            type: 'number',
+            name: 'Department ID',
+            type: 'list',
             message: 'What is the managers department id number?',
-            validate: function(value) {
-                var valid = !isNaN(parseFloat)(value);
-                return valid || 'Please enter a number';
-                runSearch();
-            },
+            choices: [
+                '1',
+                '2',
+                '3',
+                '4,'
+            ],
         })
+        .then((answer) => {
+            const query = 'SELECT id, department_id FROM job';
+            connection.query(query, { job: answer.department_id }, (err, res) => {
+                res.forEach(({ department_id }) => {
+                    console.log(
+                        `ID ${id} || Department id: ${department_id}`
+                    );
+                });
+                runSearch();
+            });
+        });
+
+
 };
 
 //Prompts user for Department Id that they belong too
@@ -106,7 +125,7 @@ const titleSearch = () => {
     inquirer
         .prompt({
             name: 'title',
-            type: 'choice',
+            type: 'list',
             message: 'What is the employees title?',
             choices: [
                 'Senior Developer',
@@ -117,22 +136,23 @@ const titleSearch = () => {
         })
         .then((answer) => {
             const query = 'SELECT id, title FROM job';
-            connection.query(query, { title: answer.title }, (err, res) => {
+            connection.query('SELECT * FROM job WHERE ?', { title: answer.title }, (err, res) => {
+                console.log(res);
                 res.forEach(({ id }) => {
                     console.log(
-                        `ID: ${id} || Title: ${title}`
+                        `ID: ${res[0].id} || Title: ${res[0].title}`
                     );
                 });
                 runSearch();
-        }
-    );
-});
+            });
+        });
+};
 //Prompts user for desired salary for the employee
-const fifthPrompt = () => {
+const salarySearch = () => {
     inquirer
         .prompt({
             name: 'action',
-            type: 'rawlist',
+            type: 'list',
             message: 'What is the employees salary?',
             choices: [
                 '60000',
@@ -144,45 +164,74 @@ const fifthPrompt = () => {
         .then((answer) => {
             switch (answer.action) {
                 case '60000':
-                    salaryInput();
+                    runSearch();
                     break;
 
                 case '75000':
-                    salaryInput();
+                    runSearch();
                     break;
 
                 case '90000':
-                    salaryInput();
+                    runSearch();
                     break;
 
                 case '110000':
-                    salaryInput();
+                    runSearch();
                     break;
             }
         });
 };
 
 //Prompt for employee name
-const employeeName = () => {
-    inquirer
-      .prompt({
-        name: 'Employee Name',
-        type: 'input',
-        message: 'What is the employees name?',
-      })
-      .then((answer) => {
-        const query = 'SELECT first_name, last_name, WHERE ?';
-        connection.query(query, { employees: answer.first_name }, (err, res) => {
-          res.forEach(({ first_name, last_name }) => {
-            console.log(
-              `Employee name: ${first_name} || Last name: ${last_name} `
-            );
-          });
-          runSearch();
-        });
-      });
+const getNewEmployee = () => {
+    const query = 'SELECT first_name FROM employees WHERE ?';
+    connection.query(query, { jobs_id: 5 },(err, res) => {
+            const Managers = res;
+            const Jobs = 'random' 
+            inquirer
+                .prompt([
+                    {
+                        name: 'EmployeeName',
+                        type: 'input',
+                        message: 'What is the employees name?'
+                    },
+                    {
+                        message: 'What is the employees manager id?',
+                        name: 'ManagerId',
+                        type: 'list',
+                        choices: Managers
+                    },
+                    {
+                        message: 'What is the employees job id?',
+                        type: 'list',
+                        choices: Jobs
+                    }
+                ])
+                .then((answer) => {
+                    const query = 'INSERT INTO EMPLOYEES SET ?';
+                    let first_name, last_name;
+                    first_name = answer.EmployeeName.split(' ');
+                    last_name = first_name[1];
+                    first_name = first_name[0];
+                    connection.query(query, { first_name: answer.first_name, last_name: answer.last_name }, (err, res) => {
+                        res.forEach(({ first_name, last_name }) => {
+                            console.log(
+                                `Employee name: ${first_name} || Last name: ${last_name} `
+                            );
+                        });
+                        runSearch();
+                    });
+                });
+        })
 };
 
+const getAllManagers = () => {
+    const query = 'SELECT * FROM EMPLOYEES WHERE ?';
+    connection.query(query, { jobs_id: 5 })
+        .then((err, res) => {
+            return res;
+        })
+}
 //Prompt for role id
 const role = () => {
     inquirer
@@ -197,29 +246,29 @@ const role = () => {
                 '4',
             ],
         })
-    .then((answer) => {
-        switch (answer.action) {
-            case '1':
-                uxSearch();
-                break;
+        .then((answer) => {
+            switch (answer.action) {
+                case '1':
+                    uxSearch();
+                    break;
 
-            case '2':
-                developerSearch();
-                break;
+                case '2':
+                    developerSearch();
+                    break;
 
-            case '3':
-                managerSearch();
-                break;
+                case '3':
+                    managerSearch();
+                    break;
 
-            case '4':
-                engineerSearch();
-                break;
+                case '4':
+                    engineerSearch();
+                    break;
 
-            default:
-                console.log(`invalid action ${answer.action}`);
-                break;
-        }
-    });
+                default:
+                    console.log(`invalid action ${answer.action}`);
+                    break;
+            }
+        });
 };
 
 //Prompt for manager id
@@ -236,29 +285,29 @@ const managerPrompt = () => {
                 '4',
             ],
         })
-    .then((answer) => {
-        switch (answer.action) {
-            case '1':
-                uxSearch();
-                break;
+        .then((answer) => {
+            switch (answer.action) {
+                case '1':
+                    uxSearch();
+                    break;
 
-            case '2':
-                developerSearch();
-                break;
+                case '2':
+                    developerSearch();
+                    break;
 
-            case '3':
-                managerSearch();
-                break;
+                case '3':
+                    managerSearch();
+                    break;
 
-            case '4':
-                engineerSearch();
-                break;
+                case '4':
+                    engineerSearch();
+                    break;
 
-            default:
-                console.log(`invalid action ${answer.action}`);
-                break;
-        }
-    });
+                default:
+                    console.log(`invalid action ${answer.action}`);
+                    break;
+            }
+        });
 };
 
 //Prompt for job id
@@ -275,26 +324,27 @@ const jobPrompt = () => {
                 '4',
             ],
         })
-    .then((answer) => {
-        switch (answer.action) {
-            case '1':
-                uxSearch();
-                break;
+        .then((answer) => {
+            switch (answer.action) {
+                case '1':
+                    uxSearch();
+                    break;
 
-            case '2':
-                developerSearch();
-                break;
+                case '2':
+                    developerSearch();
+                    break;
 
-            case '3':
-                managerSearch();
-                break;
+                case '3':
+                    managerSearch();
+                    break;
 
-            case '4':
-                engineerSearch();
-                break;
+                case '4':
+                    engineerSearch();
+                    break;
 
-            default:
-                console.log(`invalid action ${answer.action}`);
-                break;
-        };
-});
+                default:
+                    console.log(`invalid action ${answer.action}`);
+                    break;
+            };
+        });
+}
