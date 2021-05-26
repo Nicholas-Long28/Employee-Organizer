@@ -218,7 +218,7 @@ const getNewEmployee = () => {
                     }
                 ])
                 .then((answer) => {
-                    const query = 'INSERT INTO EMPLOYEES SET ?';
+                    const query = 'INSERT first_name last_name INTO EMPLOYEES SET ?';
                     let first_name, last_name;
                     first_name = answer.EmployeeName.split(' ');
                     last_name = first_name[1];
@@ -258,27 +258,16 @@ const RoleId = () => {
             ],
         })
         .then((answer) => {
-            switch (answer.action) {
-                case '1':
-                    uxSearch();
-                    break;
-
-                case '2':
-                    developerSearch();
-                    break;
-
-                case '3':
-                    managerSearch();
-                    break;
-
-                case '4':
-                    engineerSearch();
-                    break;
-
-                default:
-                    console.log(`invalid action ${answer.action}`);
-                    break;
-            }
+            const query = 'SELECT roles_id FROM EMPLOYEES;';
+            connection.query('INSERT roles_id INTO employees SET ?', { RoleId: answer.roles_id }, (err, res) => {
+                console.log(res);
+                res.forEach(({ roles_id }) => {
+                    console.log(
+                        `ID: ${res[1].roles_id}`
+                    );
+                });
+                runSearch();
+            });
         });
 };
 /*

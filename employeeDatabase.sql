@@ -4,7 +4,6 @@ CREATE DATABASE company_db;
 USE company_db;
 
 
-SELECT * FROM employees WHERE jobs_id = 5;
 /* Creates table for the departments in which the employees work*/
 CREATE TABLE department(
     id INT AUTO_INCREMENT NOT NULL,
@@ -27,7 +26,7 @@ CREATE TABLE employees(
     id INT AUTO_INCREMENT NOT NULL,
     first_name VARCHAR(30) NOT NULL,
     last_name VARCHAR(30) NOT NULL,
-    roles_id INTEGER(10) NOT NULL,
+    roles_id INT UNSIGNED NOT NULL,
     manager_id INTEGER(10) NOT NULL,
     jobs_id INT NOT NULL,
     PRIMARY KEY (id)
