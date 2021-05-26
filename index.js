@@ -78,8 +78,8 @@ const departmentSearch = () => {
             ],
         })
         .then((answer) => {
-            const query = 'SELECT id, department_Name FROM department WHERE ?';
-            connection.query(query, { department_Name: answer.department }, (err, res) => {
+            const query = 'SELECT id, department_Name FROM department';
+            connection.query(query, { department: answer.department_Name }, (err, res) => {
                 res.forEach(({ id, department_Name }) => {
                     console.log(
                         `ID: ${id} || Department: ${department_Name}`
@@ -182,9 +182,9 @@ const salarySearch = () => {
         });
 };
 
-//Prompt for employee name
+//Prompt for employee name, manager id, employee id
 const getNewEmployee = () => {
-    const query = 'SELECT first_name FROM employees WHERE ?';
+    const query = 'SELECT first_name FROM employees';
     connection.query(query, { jobs_id: 5 },(err, res) => {
             const Managers = res;
             const Jobs = 'random' 
@@ -196,15 +196,21 @@ const getNewEmployee = () => {
                         message: 'What is the employees name?'
                     },
                     {
-                        message: 'What is the employees manager id?',
                         name: 'ManagerId',
                         type: 'list',
-                        choices: Managers
+                        message: 'What is the employees manager id?',
+                        choices: ['5']
                     },
                     {
+                        name: 'EmployeeId',
                         message: 'What is the employees job id?',
                         type: 'list',
-                        choices: Jobs
+                        choices: [
+                            '1',
+                            '2',
+                            '3',
+                            '4',
+                        ],
                     }
                 ])
                 .then((answer) => {
