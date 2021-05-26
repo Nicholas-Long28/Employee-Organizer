@@ -55,6 +55,9 @@ const runSearch = () => {
                 case 'Add new employee.':
                     getNewEmployee();
                     break;
+                case 'What is the employees role id?':
+                    RoleId();
+                    break;
 
                 default:
                     console.log(`Invalid action: ${answer.action}`);
@@ -199,7 +202,8 @@ const getNewEmployee = () => {
                         name: 'ManagerId',
                         type: 'list',
                         message: 'What is the employees manager id?',
-                        choices: ['5']
+                        choices: ['5',
+                    'null']
                     },
                     {
                         name: 'EmployeeId',
@@ -219,7 +223,8 @@ const getNewEmployee = () => {
                     first_name = answer.EmployeeName.split(' ');
                     last_name = first_name[1];
                     first_name = first_name[0];
-                    connection.query(query, { first_name: answer.first_name, last_name: answer.last_name }, (err, res) => {
+                    connection.query(query, { first_name: first_name, last_name: last_name }, (err, res) => {
+                        console.log(err,res);
                         res.forEach(({ first_name, last_name }) => {
                             console.log(
                                 `Employee name: ${first_name} || Last name: ${last_name} `
@@ -239,11 +244,11 @@ const getAllManagers = () => {
         })
 }
 //Prompt for role id
-const role = () => {
+const RoleId = () => {
     inquirer
         .prompt({
-            name: 'action',
-            type: 'rawlist',
+            name: 'RoleId',
+            type: 'list',
             message: 'What is the role id for the employee?',
             choices: [
                 '1',
@@ -276,7 +281,7 @@ const role = () => {
             }
         });
 };
-
+/*
 //Prompt for manager id
 const managerPrompt = () => {
     inquirer
@@ -353,4 +358,4 @@ const jobPrompt = () => {
                     break;
             };
         });
-}
+}*/
